@@ -1,0 +1,79 @@
+// Arquivo: Bat.jack
+// VERSÃO COM MOVIMENTO AUTOMÁTICO ("PILOTO AUTOMÁTICO")
+
+class Bat {
+
+    field int x, y;
+    field int width, height;
+    field int direction; // A "memória" da raquete. 0=parado, 1=esquerda, 2=direita
+
+    /** Constrói uma nova raquete. */
+    constructor Bat new(int Ax, int Ay, int Awidth, int Aheight) {
+        let x = Ax;
+        let y = Ay;
+        let width = Awidth;
+        let height = Aheight;
+        let direction = 0; // Inicia parada.
+        do show();
+        return this;
+    }
+
+    /** Libera a memória. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Mostra a raquete na tela. */
+    method void show() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        return;
+    }
+
+    /** Esconde a raquete da tela. */
+    method void hide() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        return;
+    }
+
+    method int getLeft() { return x; }
+    method int getRight() { return x + width; }
+    method int getWidth() { return width; }
+
+    method void setWidth(int Awidth) {
+        do hide();
+        let width = Awidth;
+        do show();
+        return;
+    }
+
+    /** NOVO: Define a direção do movimento contínuo. */
+    method void setDirection(int Adirection) {
+        let direction = Adirection;
+        return;
+    }
+
+    /** NOVO: Move a raquete um passo de acordo com a direção memorizada. */
+    method void move() {
+        // Se a direção for 1 (esquerda), move para a esquerda.
+        if (direction = 1) {
+            do hide();
+            let x = x - 4;
+            if (x < 0) { let x = 0; }
+            do show();
+        }
+        
+        // Se a direção for 2 (direita), move para a direita.
+        if (direction = 2) {
+            do hide();
+            let x = x + 4;
+            if ((x + width) > 511) { let x = 511 - width; }
+            do show();
+        }
+        
+        // Se a direção for 0, não faz nada.
+        return;
+    }
+}

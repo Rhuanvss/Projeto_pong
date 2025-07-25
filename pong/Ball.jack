@@ -1,0 +1,148 @@
+// Arquivo: Ball.jack
+// Representa a bola do jogo.
+
+class Ball {
+
+    field int x, y;
+    field int lengthx, lengthy;
+    field int d, straightD, diagonalD;
+    field boolean invert, positivex, positivey;
+    field int leftWall, rightWall, topWall, bottomWall;
+    field int wall;
+
+    /** Constrói uma nova bola. */
+    constructor Ball new(int Ax, int Ay, int AleftWall, int ArightWall, int AtopWall, int AbottomWall) {    	
+        let x = Ax;
+        let y = Ay;
+        let leftWall = AleftWall;
+        let rightWall = ArightWall - 6;   // ajusta pelo tamanho da bola
+        let topWall = AtopWall; 
+        let bottomWall = AbottomWall - 6; // ajusta pelo tamanho da bola
+        let wall = 0;
+        do show();
+        return this;
+    }
+
+    /** Libera a memória. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Mostra a bola. */
+    method void show() {
+        do Screen.setColor(true);
+        do draw();
+        return;
+    }
+
+    /** Esconde a bola. */
+    method void hide() {
+        do Screen.setColor(false);
+        do draw();
+        return;
+    }
+
+    /** Desenha a bola (um quadrado de 6x6 pixels). */
+    method void draw() {
+        do Screen.drawRectangle(x, y, x + 5, y + 5);
+        return;
+    }
+
+    /** Retorna a borda esquerda da bola. */
+    method int getLeft() {
+        return x;
+    }
+
+    /** Retorna a borda direita da bola. */
+    method int getRight() {
+        return x + 5;
+    }
+    
+    /** Define o destino da bola para calcular a trajetória. */
+    method void setDestination(int destx, int desty) {
+        var int dx, dy, temp;
+        let lengthx = destx - x;
+        let lengthy = desty - y;
+        let dx = Math.abs(lengthx);
+        let dy = Math.abs(lengthy);
+        let invert = (dx < dy);
+
+        if (invert) {
+            let temp = dx; let dx = dy; let dy = temp; // Troca dx e dy
+            let positivex = (y < desty);
+            let positivey = (x < destx);
+        }
+        else {
+            let positivex = (x < destx);
+            let positivey = (y < desty);
+        }
+        let d = (2 * dy) - dx;
+        let straightD = 2 * dy;
+        let diagonalD = 2 * (dy - dx);
+        return;
+    }
+
+    /** Move a bola e retorna qual parede foi atingida. */
+    method int move() {
+        do hide();
+        if (d < 0) { 
+            let d = d + straightD;
+        }
+        else {
+            let d = d + diagonalD;
+            if (positivey) {
+                if (invert) { let x = x + 4; } else { let y = y + 4; }
+            }
+            else {
+                if (invert) { let x = x - 4; } else { let y = y - 4; }
+            }
+        }
+        if (positivex) {
+            if (invert) { let y = y + 4; } else { let x = x + 4; }
+        }
+        else {
+            if (invert) { let y = y - 4; } else { let x = x - 4; }
+        }
+
+        let wall = 0;
+        if (x < leftWall)  { let wall = 1; let x = leftWall; }
+        if (x > rightWall) { let wall = 2; let x = rightWall; }
+        if (y < topWall)   { let wall = 3; let y = topWall; }
+        if (y > bottomWall){ let wall = 4; let y = bottomWall; }
+        
+        do show();
+        return wall;
+    }
+
+    /** Calcula a nova trajetória da bola após uma colisão. */
+    method void bounce(int bouncingDirection) {
+        var int newx, newy, divLengthx, divLengthy, factor;
+        let divLengthx = lengthx / 10;
+        let divLengthy = lengthy / 10;
+        
+        if (bouncingDirection = 0) { let factor = 10; }
+        else {
+            if (((lengthx > 0) & (bouncingDirection = 1)) | ((lengthx < 0) & (bouncingDirection = -1))) {
+                let factor = 20;
+            }
+            else { let factor = 5; }
+        }
+
+        if ((wall = 1) | (wall = 2)) { // Colisão lateral
+            let newx = x;
+            let newy = 511; // Inverte a direção Y
+        } else { // Colisão no topo ou fundo
+            let newx = 511; // Inverte a direção X
+            let newy = y;
+        }
+
+        if (wall = 1) { let newx = 506; let newy = y + ( (divLengthy * (-50) / divLengthx) * factor ); }
+        if (wall = 2) { let newx = 0;   let newy = y + ( (divLengthy * 50 / divLengthx) * factor ); }
+        if (wall = 3) { let newy = 250; let newx = x + ( (divLengthx * (-25) / divLengthy) * factor ); }
+        if (wall = 4) { let newy = 0;   let newx = x + ( (divLengthx * 25 / divLengthy) * factor ); }
+
+        do setDestination(newx, newy);
+        return;
+    }
+}

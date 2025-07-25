@@ -1,0 +1,27 @@
+// Arquivo: Main.jack
+// Inicia o jogo Pong.
+
+/**
+ * A classe principal do jogo Pong.
+ */
+class Main {
+
+    /** Inicializa e executa uma instância do jogo Pong. */
+    function void main() {
+        var PongGame game;
+
+        // Cria uma nova instância única do jogo.
+        do PongGame.newInstance();
+        
+        // Obtém a instância criada.
+        let game = PongGame.getInstance();
+        
+        // Executa o jogo.
+        do game.run();
+        
+        // Libera a memória após o fim do jogo.
+        do game.dispose();
+        
+        return;
+    }
+}
