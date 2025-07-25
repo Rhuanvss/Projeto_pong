@@ -361,6 +361,15 @@ function PongGame.moveBall 6
     pop temp 0
     goto PongGame_26
 label PongGame_27
+    push this 2
+    push this 2
+    call Ball.getLeft 1
+    push constant 248
+    call Ball.setLocation 3
+    pop temp 0
+    push constant 500
+    call Sys.wait 1
+    pop temp 0
     push constant 2
     pop this 4
     push constant 1
@@ -403,6 +412,15 @@ label PongGame_24
     pop temp 0
     goto PongGame_30
 label PongGame_31
+    push this 2
+    push this 2
+    call Ball.getLeft 1
+    push constant 0
+    call Ball.setLocation 3
+    pop temp 0
+    push constant 500
+    call Sys.wait 1
+    pop temp 0
     push constant 1
     pop this 4
     push constant 1

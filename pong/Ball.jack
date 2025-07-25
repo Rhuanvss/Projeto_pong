@@ -15,9 +15,9 @@ class Ball {
         let x = Ax;
         let y = Ay;
         let leftWall = AleftWall;
-        let rightWall = ArightWall - 6;   // ajusta pelo tamanho da bola
-        let topWall = AtopWall; 
-        let bottomWall = AbottomWall - 6; // ajusta pelo tamanho da bola
+        let rightWall = ArightWall - 6; 
+        let topWall = AtopWall;
+        let bottomWall = AbottomWall - 6;
         let wall = 0;
         do show();
         return this;
@@ -49,14 +49,16 @@ class Ball {
         return;
     }
 
-    /** Retorna a borda esquerda da bola. */
-    method int getLeft() {
-        return x;
-    }
+    method int getLeft() { return x; }
+    method int getRight() { return x + 5; }
 
-    /** Retorna a borda direita da bola. */
-    method int getRight() {
-        return x + 5;
+    /** Reposiciona a bola para uma coordenada específica. */
+    method void setLocation(int newX, int newY) {
+        do hide();
+        let x = newX;
+        let y = newY;
+        do show();
+        return;
     }
     
     /** Define o destino da bola para calcular a trajetória. */
@@ -69,7 +71,8 @@ class Ball {
         let invert = (dx < dy);
 
         if (invert) {
-            let temp = dx; let dx = dy; let dy = temp; // Troca dx e dy
+            let temp = dx;
+            let dx = dy; let dy = temp;
             let positivex = (y < desty);
             let positivey = (x < destx);
         }
@@ -120,7 +123,6 @@ class Ball {
         var int newx, newy, divLengthx, divLengthy, factor;
         let divLengthx = lengthx / 10;
         let divLengthy = lengthy / 10;
-        
         if (bouncingDirection = 0) { let factor = 10; }
         else {
             if (((lengthx > 0) & (bouncingDirection = 1)) | ((lengthx < 0) & (bouncingDirection = -1))) {
@@ -129,18 +131,18 @@ class Ball {
             else { let factor = 5; }
         }
 
-        if ((wall = 1) | (wall = 2)) { // Colisão lateral
+        if ((wall = 1) | (wall = 2)) {
             let newx = x;
-            let newy = 511; // Inverte a direção Y
-        } else { // Colisão no topo ou fundo
-            let newx = 511; // Inverte a direção X
+            let newy = 511;
+        } else {
+            let newx = 511;
             let newy = y;
         }
 
         if (wall = 1) { let newx = 506; let newy = y + ( (divLengthy * (-50) / divLengthx) * factor ); }
-        if (wall = 2) { let newx = 0;   let newy = y + ( (divLengthy * 50 / divLengthx) * factor ); }
+        if (wall = 2) { let newx = 0; let newy = y + ( (divLengthy * 50 / divLengthx) * factor ); }
         if (wall = 3) { let newy = 250; let newx = x + ( (divLengthx * (-25) / divLengthy) * factor ); }
-        if (wall = 4) { let newy = 0;   let newx = x + ( (divLengthx * 25 / divLengthy) * factor ); }
+        if (wall = 4) { let newy = 0; let newx = x + ( (divLengthx * 25 / divLengthy) * factor ); }
 
         do setDestination(newx, newy);
         return;
